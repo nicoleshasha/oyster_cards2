@@ -49,5 +49,10 @@ describe Oystercard do
       @oystercard.touch_out
       expect(@oystercard.in_journey?).to eq(false)
     end
+    it 'Deducts the fare from the balance of the card' do
+      @oystercard.touch_in
+      @oystercard.touch_out
+      expect(@oystercard.balance).to eq(4)
+    end
   end
 end
