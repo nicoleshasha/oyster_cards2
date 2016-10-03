@@ -52,7 +52,7 @@ describe Oystercard do
     it 'Deducts the fare from the balance of the card' do
       @oystercard.touch_in
       @oystercard.touch_out
-      expect(@oystercard.balance).to eq(4)
+      expect { @oystercard.touch_out }.to change{@oystercard.balance}.by(-1)
     end
   end
 end
