@@ -13,10 +13,6 @@ class Oystercard
     @balance += amount
   end
 
-  def deduct(fare)
-    @balance -= fare
-  end
-
   def touch_in
     raise("Not enough funds") if @balance < 1
     @in_journey = true
@@ -30,4 +26,9 @@ class Oystercard
     @in_journey = false
     deduct(1)
   end
+
+  def deduct(fare)
+    @balance -= fare
+  end
+
 end
