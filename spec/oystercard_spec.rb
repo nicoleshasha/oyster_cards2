@@ -33,6 +33,14 @@ describe Oystercard do
       @oystercard.touch_in
       expect(@oystercard.in_journey?).to eq(true)
     end
+    it 'Requires at least £1 to be able to travel' do
+      @oystercard.deduct(4)
+      expect(@oystercard.touch_in).to eq(true)
+    end
+    it 'Raises error if trying to travel with less than £1' do
+      @oystercard.deduct(4.01)
+      expect{ @oystercard.touch_in }.to raise_error("Not enough funds")
+    end
   end
 
   describe '#touch_out' do
