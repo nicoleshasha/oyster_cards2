@@ -22,5 +22,9 @@ describe Oystercard do
     end
   end
 
-
+  describe '#deduct' do
+    it 'Deducts a certain fare from the balance' do
+      expect(@oystercard.deduct(4)).to eq(1)
+    end
+  end
 end
