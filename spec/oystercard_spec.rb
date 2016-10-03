@@ -27,4 +27,11 @@ describe Oystercard do
       expect(@oystercard.deduct(4)).to eq(1)
     end
   end
+
+  describe '#touch_in' do
+    it 'Changes the in_journey variable to true' do
+      @oystercard.touch_in
+      expect(@oystercard.in_journey?).to eq(true)
+    end
+  end
 end
