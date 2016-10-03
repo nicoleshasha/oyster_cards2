@@ -29,11 +29,15 @@ describe Oystercard do
     end
     it 'Requires at least £1 to be able to travel' do
       oyster_1 = Oystercard.new(1)
-      expect(oyster_1.touch_in).to eq(true)
+      expect(oyster_1.touch_in).to eq('station_of_origin')
     end
     it 'Raises error if trying to travel with less than £1' do
       oyster_099 = Oystercard.new(0.99)
       expect{ oyster_099.touch_in }.to raise_error("Not enough funds")
+    end
+    it 'Records journey start location' do
+      @oystercard.touch_in('Waterloo')
+      expect(@oystercard.entry_station).to eq('Waterloo')
     end
   end
 
