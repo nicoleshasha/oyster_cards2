@@ -56,21 +56,6 @@ end
   it "tests to see if the origin station is stored" do
     expect(oystercard.journey).not_to be ""
   end
-
-  it "stores the entry station when touching in" do
-    oystercard.touch_in(station)
-    expect(oystercard.journey).to eq [station]
-  end
-end
-
-describe "#deduct_balance" do
-  it "deducts an amount from the standing balance" do
-    expect{oystercard.deduct_balance(20)}.to change {subject.balance}.by -20
-  end
-end
-
-it "expects there to be no journey history in new oystercard" do
-  expect(oystercard.history).to be_empty
 end
 
 describe '#touch_out' do
@@ -81,14 +66,7 @@ describe '#touch_out' do
   end
 
   it "uses the deduct method to deduct the minimum fare when you touch out" do
-    expect{oystercard.touch_out(station)}.to change {subject.balance}.by -1
-  end
-
-  it "saves the journey history once a journey is completed" do
-    oystercard.touch_in(station)
-    oystercard.touch_out(station)
-    expect(oystercard.history).to eq ({1 => [station, station]})
+    expect{oystercard.touch_in(station)}.to change {subject.balance}.by -1
   end
 end
-
 end

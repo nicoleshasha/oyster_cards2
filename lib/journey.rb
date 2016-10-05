@@ -12,8 +12,8 @@ end
 
   def end(exit_station)
     @journey << exit_station
-    write_history
     @complete = true
+    write_history
   end
 
   def write_history
@@ -25,8 +25,11 @@ end
     @complete
   end
 
-  def fare
-    return MINIMUM_FARE if complete?
+  def fine
     FINE
+  end
+
+  def fare
+    MINIMUM_FARE
   end
 end

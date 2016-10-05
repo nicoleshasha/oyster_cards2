@@ -18,7 +18,7 @@ it "should recognize incomplete journeys" do
 end
 
 it "should impose fine if journey is incomplete" do
-  expect(journey.fare).to eq Journey::FINE
+  expect(journey.fine).to eq Journey::FINE
 end
 
 it "should return normal fare if journey is completed" do
