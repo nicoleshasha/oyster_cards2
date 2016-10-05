@@ -1,5 +1,5 @@
 class Oystercard
-  attr_reader :balance, :in_use, :stations, :station, :journey
+  attr_reader :balance, :in_use, :stations, :station, :journey, :journeys, :history
   DEFAULT_BALANCE = 5
   BALANCE_LIMIT = 90
   MINIMUM_FARE = 1
@@ -8,6 +8,9 @@ class Oystercard
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
     @in_use = false
+    @journey = []
+    @journeys = []
+    @history = {}
   end
 
   def top_up(amount)
@@ -18,11 +21,20 @@ class Oystercard
   def touch_in(entry_station)
     raise "Not enough funds" if @balance < 1
     @in_use = true
+    @journey << entry_station
   end
 
   def touch_out(exit_station)
     @in_use = false
     deduct_balance(MINIMUM_FARE)
+    @journey << exit_station
+    write_history
+    @journey.clear
+  end
+
+  def write_history
+    @journeys << @journey.dup
+    @history = Hash[@journeys.map.with_index(1) { |x, i| [i, x] }]
   end
 
   def in_journey?
