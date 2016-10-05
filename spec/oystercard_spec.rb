@@ -1,56 +1,82 @@
 require 'oystercard'
 
 describe Oystercard do
+  subject(:oystercard) {described_class.new}
 
-  before :each do
-    @oystercard = Oystercard.new
-  end
+  describe "#balance" do
 
-  describe '#top_up' do
-    it 'Adds to the balance of the instance' do
-      @oystercard.top_up(10)
-      expect(@oystercard.balance).to eq(15)
+    it "expects a default balance of 5" do
+      expect(oystercard.balance).to eq Oystercard::DEFAULT_BALANCE
     end
-    it 'Limits the balance to £90' do
-      expect { @oystercard.top_up(85) }.to raise_error("Maximum balance is £90")
-    end
-  end
 
-  describe '#balance' do
-    it 'Returns the balance on the card' do
-      expect(@oystercard.balance).to eq(5)
+    it "expects a different balance value than the default value" do
+      oyster = Oystercard.new(20)
+      expect(oyster.balance).to eq 20
     end
   end
 
-  describe '#touch_in' do
-    it 'Changes the in_journey variable to true' do
-      @oystercard.touch_in
-      expect(@oystercard.in_journey?).to eq(true)
+  describe "#top_up" do
+    before do
+      @balance = 5
     end
-    it 'Requires at least £1 to be able to travel' do
-      oyster_1 = Oystercard.new(1)
-      expect(oyster_1.touch_in).to eq('station_of_origin')
+
+    it "allows the card to top-up certain amount" do
+      expect(oystercard).to respond_to(:top_up).with(1).argument
     end
-    it 'Raises error if trying to travel with less than £1' do
-      oyster_099 = Oystercard.new(0.99)
-      expect{ oyster_099.touch_in }.to raise_error("Not enough funds")
-    end
-    it 'Records journey start location' do
-      @oystercard.touch_in('Waterloo')
-      expect(@oystercard.entry_station).to eq('Waterloo')
-    end
+
+      it "expects the balance to increase by top-up amount" do
+        expect{oystercard.top_up(16)}.to change {subject.balance}.by 16
+      end
+
+      it "sets limit for oyster at 90" do
+        expect(oystercard.balance).to be <= oystercard.limit
+      end
+      it "raises and error if balance is more than 90" do
+        amount = 100
+          expect{oystercard.top_up(amount)}.to raise_error "Total balance should not be more than 90"
+      end
+end
+
+describe '#touch_in' do
+  it "allows a user to touch in at a station" do
+    oystercard.touch_in
+    expect(oystercard.in_use).to eq true
   end
 
-  describe '#touch_out' do
-    it 'Changes the in_journey variable to false' do
-      @oystercard.touch_in
-      @oystercard.touch_out
-      expect(@oystercard.in_journey?).to eq(false)
-    end
-    it 'Deducts the fare from the balance of the card' do
-      @oystercard.touch_in
-      @oystercard.touch_out
-      expect { @oystercard.touch_out }.to change{@oystercard.balance}.by(-1)
-    end
+  it  "tests to see if passenger is in journey" do
+    oystercard.touch_in
+    oystercard.in_journey?
+    expect(oystercard.in_use).to eq true
+end
+
+  it "does not allow to touch in when balance is less than £1" do
+    oyster1 = Oystercard.new(0)
+    expect{oyster1.touch_in}.to raise_error "Not enough funds"
   end
+
+  it "tests to see if the origin station is stored" do
+    expect(oystercard.journey).not_to be ""
+  end
+
+end
+
+describe "#deduct_balance" do
+  it "deducts an amount from the standing balance" do
+    expect{oystercard.deduct_balance(20)}.to change {subject.balance}.by -20
+  end
+end
+
+describe '#touch_out' do
+  it "allows a user to touch out at a station" do
+    oystercard.touch_in
+    oystercard.touch_out
+    expect(oystercard.in_use).to eq false
+  end
+
+  it "uses the deduct method to deduct the minimum fare when you touch out" do
+    expect{oystercard.touch_out}.to change {subject.balance}.by -1
+  end
+end
+
+
 end
